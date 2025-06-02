@@ -1,6 +1,6 @@
 # 7-Zip Auto-Updater for Intune
 
-This project automates the installation and periodic updating of 7-Zip on Windows machines using Microsoft Intune. It ensures that 7-Zip is always up to date by:
+This sequence automates the installation and periodic updating of 7-Zip on Windows machines using Microsoft Intune. It ensures that 7-Zip is always up to date by:
 
 - Uninstalling any existing version of 7-Zip.
 - Downloading and installing the latest version from the official website.
