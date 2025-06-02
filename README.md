@@ -44,6 +44,13 @@ SevenZipAutoWin32/
 
 **Install-7Zip.ps1 (in `Source/`)**
 ```powershell
+This script performs the primary tasks:
+1. Dynamically scrapes the latest 7-Zip version from the official website.
+2. Uninstalls any currently installed version of 7-Zip.
+3. Downloads the appropriate MSI installer.
+4. Installs the application silently.
+5. Cleans up after itself.
+
 # Step 1: Get latest version
 try {
     $html = Invoke-WebRequest "https://www.7-zip.org/download.html" -UseBasicParsing
@@ -84,8 +91,13 @@ Remove-Item $path -Force
 Write-Host "7-Zip $latest installed."
 ```
 
-**Setup-ScheduledUpdater.ps1**
+**Setup-ScheduledUpdater.ps1** 
+
 ```powershell
+ This script does the following:
+- Copies the `Install-7Zip.ps1` into a centralized and secured system location
+- Registers a Windows Task Scheduler task that runs every 14 days as SYSTEM
+
 $taskName = "7ZipAutoUpdater"
 $target = "C:\ProgramData\7ZipUpdater\Install-7Zip.ps1"
 $source = "$PSScriptRoot\Source\Install-7Zip.ps1"
@@ -105,6 +117,42 @@ try {
 
 Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Settings $settings -RunLevel Highest -User "SYSTEM"
 Write-Host "Scheduled task '$taskName' created."
+```
+
+**Detect-7ZipVersion.ps1**
+```powershell
+This PowerShell script dynamically checks whether the latest version of 7-Zip is installed. If not, Intune flags the device as needing installation.
+
+try {
+    $html = Invoke-WebRequest "https://www.7-zip.org/download.html" -UseBasicParsing
+    if ($html.Content -match 'Download 7-Zip ([\d\.]+)') {
+        $latest = $matches[1]
+    } else {
+        Write-Host "Could not extract version."
+        exit 1
+    }
+} catch {
+    Write-Host "Failed to contact 7-Zip.org"
+    exit 1
+}
+
+$regPaths = @(
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",
+    "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
+)
+
+$found = $false
+foreach ($path in $regPaths) {
+    $installed = Get-ItemProperty -Path "$path\*" -ErrorAction SilentlyContinue | Where-Object {
+        $_.DisplayName -like "7-Zip*" -and $_.DisplayVersion -like "$latest*"
+    }
+    if ($installed) {
+        $found = $true
+        break
+    }
+}
+
+if ($found) { exit 0 } else { exit 1 }
 ```
 
 ---
