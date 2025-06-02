@@ -179,7 +179,7 @@ powershell.exe -ExecutionPolicy Bypass -File Setup-ScheduledUpdater.ps1
 ```powershell
 schtasks /Delete /TN "7ZipAutoUpdater" /F
 ```
-5. **Detection Script:** (Add as custom detection script in Intune)
+5. **Detection Script:** (Add as custom detection script in Intune same from above)
 ```powershell
 try {
     $html = Invoke-WebRequest "https://www.7-zip.org/download.html" -UseBasicParsing
