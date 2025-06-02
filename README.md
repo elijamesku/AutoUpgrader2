@@ -13,11 +13,9 @@ This project automates the installation and periodic updating of 7-Zip on Window
 
 - Windows 10 or later.
 - Microsoft Intune environment.
-- [IntuneWinAppUtil.exe](https://github.com/Microsoft/Microsoft-Win32-Content-Prep-Tool) for packaging the application.
+- [IntuneWinAppUtil.exe](https://learn.microsoft.com/en-us/intune/intune-service/apps/apps-win32-prepare) for packaging the application.
 
-### Packaging the Application
-
-# 7-Zip Automatic Updater with Intune
+## Info
 
 This PowerShell-based setup will:
 - Detect if the latest version of 7-Zip is installed.
@@ -183,7 +181,7 @@ Start-ScheduledTask -TaskName "7ZipAutoUpdater"
 ```
 ---
 
-## Summary
+## Summary *again
 - Detects if latest version of 7-Zip is installed
 - If outdated or missing, installs the newest one
 - Creates a scheduled task that checks & updates silently every 14 days
