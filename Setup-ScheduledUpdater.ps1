@@ -1,4 +1,3 @@
-# Setup-ScheduledUpdater.ps1
 # Copies Install-7Zip.ps1, runs it immediately, then creates scheduled task to repeat every 14 days
 
 $taskName = "7ZipAutoUpdater"
